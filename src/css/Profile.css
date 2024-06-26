@@ -1,0 +1,20 @@
+/* Profile.css */
+.profile-dropdown {
+    margin-right: 2rem;
+}
+
+@media (min-width: 768px) {
+    .profile-dropdown {
+        margin-right: 10rem;
+    }
+}
+
+.home-dropdown {
+    margin-left: 2rem;
+}
+
+@media (min-width: 768px) {
+    .home-dropdown {
+        margin-left: 10rem;
+    }
+}
