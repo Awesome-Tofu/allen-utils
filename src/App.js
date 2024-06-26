@@ -42,7 +42,7 @@ function App() {
               <Route exact path="/:subject/:id/:topic/:topicid/class/:classid/:typeid" element={<Recordedclass alert={showAlert} />} />
               <Route exact path="/:subject/:id/:topic/:topicid" element={<Subtopics />} />
               <Route exact path="/:subject/:id" element={<Topics />} />
-              {auth_token && <Route exact path="/" element={<Subjects  />} />}
+              {auth_token && <Route exact path="/" element={<Subjects />} />}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </>) : (

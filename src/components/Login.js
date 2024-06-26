@@ -16,6 +16,7 @@ const Login = ({ alert }) => {
     }
 
     useEffect(() => {
+        document.title = 'Login - ALLEN UTILS';
         setProgress(100)
     }, [])
 

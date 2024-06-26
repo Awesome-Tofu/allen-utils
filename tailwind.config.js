@@ -4,11 +4,14 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {}
   },
   plugins: [
     require('daisyui'),
   ],
-  darkMode: 'class'
+  darkMode: 'class',
+  daisyui: {
+    themes: ["dark"],
+  }
 }
 
