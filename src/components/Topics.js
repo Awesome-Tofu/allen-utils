@@ -52,7 +52,6 @@ const Topics = () => {
                             </figure>
                             <div className="card-body items-center text-center">
                                 <h2 className="card-title">{topic.topicsName}</h2> {/* Use topic.topicsName for the title */}
-                                <p>If a dog chews shoes whose shoes does he choose?</p> {/* Static content, can be dynamic based on topic */}
                                 <div className="card-actions">
                                     <Link to={`/${subject}/${id}/${topic.topicsName}/${topic.id}`} className="btn btn-primary">Open</Link> {/* Adjusted button text to "Open" */}
                                 </div>
