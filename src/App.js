@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Alert from './components/Alert';
 import Subjects from './components/Subjects';
@@ -13,13 +13,8 @@ import Login from './components/Login';
 
 function App() {
   const [alert, setAlert] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticated = localStorage.getItem('auth_token');
 
-  useEffect(() => {
-    if (localStorage.getItem('auth_token')) {
-      setIsAuthenticated(true);
-    }
-  }, []);
 
   const showAlert = (msg, type = "s") => {
     setAlert({ msg, type });
