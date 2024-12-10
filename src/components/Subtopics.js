@@ -52,7 +52,7 @@ const Subtopics = () => {
                             <div className="card-body items-center text-center">
                                 <h2 className="card-title">{subtopic.videoTitle}</h2>
                                 <div className="card-actions">
-                                    <Link to={`/${subject}/${id}/${topic}/${topicid}/class/${subtopic.classId}/${subtopic.type}`} className="btn btn-primary">Open</Link>
+                                    <Link to={`/${subject}/${id}/${topic}/${topicid}/class/${subtopic.classId}/${subtopic.type}`} className="btn btn-primary" target="_blank" rel="noopener noreferrer">Open</Link>
                                 </div>
                             </div>
                         </div>
