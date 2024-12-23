@@ -6,9 +6,11 @@ import DownloadIcon from '../assets/download.svg';
 import NewTab from '../assets/newtab.svg';
 import pcTutorial from '../assets/pc-download.mp4';
 import mobileDownload from '../assets/mobile-download.mp4';
+import m3u8Tutorial from '../assets/m3u8Tutorial.mp4';
 import 'video-react/dist/video-react.css';
 import { Player } from 'video-react';
 import LoadingBar from 'react-top-loading-bar';
+import extractM3u8 from '../utils/extractM3U8';
 
 
 
@@ -19,7 +21,13 @@ export default function Recordedclass({ alert }) {
     const [emoji, setEmoji] = useState('📋️');
     const { id, topicid, classid, typeid, topic, subject } = useParams();
     const [progress, setProgress] = useState(0);
+    const [m3u8Link, setM3u8Link] = useState("");
+    const [tutorialVideoSrc, setTutorialVideoSrc] = useState("");
+    const [tutorialVideoCaption, setTutorialVideoCaption] = useState("");
 
+    const isMobileDevice = () => {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
 
     useEffect(() => {
         setProgress(10)
@@ -27,21 +35,49 @@ export default function Recordedclass({ alert }) {
             const data = await getClass(classid, typeid);
             setClasses(data);
         }
-        
+
         fetchData();
         document.title = `${classes.videoTitle} - ALLEN UTILS`;
         setProgress(100)
     }, [getClass, classid, typeid, classes.videoTitle]);
 
-    const isMobileDevice = () => {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
+    useEffect(() => {
+        const fetchM3u8 = async () => {
 
-    const tutorialVideoSrc = isMobileDevice() ? mobileDownload : pcTutorial;
+            if (classes.videoLink && classes.videoLink.startsWith("https://allenplus.allen.ac.in/")) {
+                const m3u8_link = await extractM3u8(classes.videoLink);
+                setM3u8Link(m3u8_link);
+                setTutorialVideoSrc(m3u8Tutorial);
+                setTutorialVideoCaption(<>
+                    <a className="blue-dotted-underline" target="_blank" href="https://play.google.com/store/apps/details?id=com.leavjenn.m3u8downloader">
+                        Lj Video Downloader&nbsp;<img src={NewTab} alt="open" style={{ width: '14px', height: '14px', verticalAlign: 'middle', display: 'inline-block' }} />
+                    </a>
+                    <br />
+                    <p className="text-sm flex flex-col">Copy m3u8 link: <button onClick={() => { copyToClipboard(m3u8Link) }} className="btn bg-white rounded-full" >{emoji}</button></p>
+                </>);
+            } else {
+                if (isMobileDevice) {
+                    setTutorialVideoSrc(mobileDownload);
+                    setTutorialVideoCaption(<>
+                        <a className="blue-dotted-underline" target="_blank" href="https://play.google.com/store/apps/details?id=com.kiwibrowser.browser&hl=en_IN">Kiwi Browser&nbsp;<img src={NewTab} alt="PDF Icon" style={{ width: '14px', height: '14px', verticalAlign: 'middle', display: 'inline-block' }} />
+                        </a><br />
+                        <a className="blue-dotted-underline" target="_blank" href="https://chromewebstore.google.com/detail/zed-zoom-easy-downloader/pdadlkbckhinonakkfkdaadceojbekep">ZED extension <img src={NewTab} alt="open" style={{ width: '14px', height: '14px', verticalAlign: 'middle', display: 'inline-block' }} />
+                        </a>
+                    </>)
+                } else {
+                    setTutorialVideoSrc(pcTutorial);
+                    setTutorialVideoCaption(<>
+                        <a className="blue-dotted-underline" target="_blank" href="https://chromewebstore.google.com/detail/enable-right-click-for-go/ofgdcdohlhjfdhbnfkikfeakhpojhpgm">Enable Right Click Extension&nbsp;
+                            <img src={NewTab} alt="open" style={{ width: '14px', height: '14px', verticalAlign: 'middle', display: 'inline-block' }} />
+                        </a>
+                    </>)
+                }
+            }
+        }
 
-    const tutorialVideoCaption = isMobileDevice() ?
-        `<a class="blue-dotted-underline" target="_blank" href="https://play.google.com/store/apps/details?id=com.kiwibrowser.browser&hl=en_IN">Kiwi Browser&nbsp;<img src=${NewTab} alt="PDF Icon" style="width: 14px; height: 14px; vertical-align: middle; display: inline-block;"> </a><br/><a class="blue-dotted-underline" target="_blank" href="https://chromewebstore.google.com/detail/zed-zoom-easy-downloader/pdadlkbckhinonakkfkdaadceojbekep">ZED extension<img src=${NewTab} alt="PDF Icon" style="width: 14px; height: 14px; vertical-align: middle; display: inline-block;"></a>`
-        : `<a class="blue-dotted-underline" target="_blank" href="https://chromewebstore.google.com/detail/enable-right-click-for-go/ofgdcdohlhjfdhbnfkikfeakhpojhpgm">Enable Right Click Extension&nbsp;<img src=${NewTab} alt="PDF Icon" style="width: 14px; height: 14px; vertical-align: middle; display: inline-block;"> </a>`;
+        fetchM3u8();
+    }, [classes])
+
 
     const copyToClipboard = async (text) => {
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -69,6 +105,10 @@ export default function Recordedclass({ alert }) {
             }
         }
     };
+
+    useEffect(() => {
+        console.log(tutorialVideoSrc);
+    }, [tutorialVideoSrc])
 
     return (
         <>
@@ -106,14 +146,19 @@ export default function Recordedclass({ alert }) {
                         </ul>
                     </div>}
                     <br />
+                    {/* Tutorial for downloading the lecture */}
                     <button className="btn mt-10" onClick={() => document.getElementById('my_modal_1').showModal()}>How to Download the Lecture ❓</button>
                     <dialog id="my_modal_1" className="modal">
                         <div className="modal-box">
                             <h3 className="font-bold text-lg">Tutorial</h3>
-                            <Player>
-                                <source src={tutorialVideoSrc} />
-                            </Player>
-                            <div className='mt-7' dangerouslySetInnerHTML={{ __html: tutorialVideoCaption }}></div>
+                            {/* <Player> */}
+                                <video src={tutorialVideoSrc} controls="controls"/>
+                            {/* </Player> */}
+                            <div className='mt-7'
+                            // dangerouslySetInnerHTML={{ __html: tutorialVideoCaption }}
+                            >
+                                {tutorialVideoCaption}
+                            </div>
                             <div className="modal-action">
                                 <form method="dialog">
                                     {/* if there is a button in form, it will close the modal */}
